@@ -1,0 +1,205 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1159
+{\fonttbl\f0\fnil\fcharset0 LucidaGrande;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Monaco;
+}
+{\colortbl;\red255\green255\blue255;}
+\vieww16340\viewh17500\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs48 \cf0 Dictionary Development Kit
+\b0\fs24 \
+\
+\
+
+\b\fs32 [1] Abstract
+\b0\fs24 \
+\
+This document describes how to build a new dictionary for Dictonary.app.\
+Make a copy of 'project_template' folder to somewhere else.  It is your project folder.  And, do the following steps.\
+\
+\
+
+\b\fs32 [2] Prepare source data
+\b0\fs24 \
+\
+\
+
+\b\fs32 [2-1] Dictionary contents XML
+\b0\fs24 \
+\
+Prepare dictionary contents as a file like MyDictionary.xml.  It's encoding should be UTF-8.\
+If you use different file name, you need to edit the variable 'DICT_SRC_PATH' in Makefile.\
+\
+Please refer the documents below for the content schema.\
+/DevTools/Utilities/Dictionary Development Kit/documents/Dictionary Format.rtf\
+The schema is defined using RELAX NG (http://www.relaxng.org/).  It is possible to validate the dictionary source using RELAX NG validator programs.  (cf. http://www.relaxng.org/#validators )\
+\
+It is highly recommended to validate your dictionary source before building new dictionary.\
+For example, using Jing (http://www.thaiopensource.com/relaxng/jing.html), it is possible to validate a XML as below.\
+$ java -jar 'path of jing.jar' 'schema definition' 'XML to validate'\
+If you are in the project_template folder and Jing is at ../jing/, the command line would be as below.\
+$ java -jar ../jing/bin/jing.jar ../documents/DictionarySchema/AppleDictionarySchema.rng MyDictionary.xml\
+\
+\
+
+\b\fs32 [2-2] StyleSheet
+\b0\fs24 \
+\
+Need to prepare a style sheet to be used for the contents.\
+You may edit the MyDictionary.css.\
+If you use different file name, you need to edit the variable 'CSS_PATH' in Makefile.\
+\
+\
+
+\b\fs32 [2-3] Front/Back Matter
+\b0\fs24 \
+\
+The example dictionary in the project_template has Front/Back Matter page.  It is implemented as an entry in the contents source file.  The entry has the id "
+\f1 front_back_matter
+\f0 ".  The id for the purpose is defined in the Info.plist with the key DCSDictionaryFrontMatterReferenceID.\
+\
+Please modify the content entry and the value of the DCSDictionaryFrontMatterReferenceID.\
+If the dictionary doesn't have Front/Back Matter, the content entry and the Info.plist entry should be removed from the project_template.\
+\
+
+\b\fs32 [2-4] Dictionary-specific Preference
+\b0\fs24 \
+\
+The project_template contains the example files for it.  \
+\
+OtherResources/\
+	MyDictionary_prefs.html\
+	MyDictionary.xsl\
+\
+Please modify them and the corresponding entries in the Info.plist.  i.e. DCSDictionaryDefaultPrefs, DCSDictionaryPrefsHTML, and DCSDictionaryXSL.\
+If the dictionary doesn't have preference, these files and entries should be removed from the project_template.\
+\
+\
+
+\b\fs32 [2-5] OtherResources
+\b0\fs24 \
+\
+A dictionary might contain some pictures or some other resources.  They should be placed in the 'OtherResources' folder in the 'project_template' folder.  The contents of the folder are copied into the newly built dictionary while building the dictionary.\
+\
+Suppose you place 'Images' folder, and placed 'test.png' in it.\
+\
+OtherResources/\
+	Images/\
+		test.png\
+\
+The 'Images' folder will be copied into the dictionary.  The contents can be referred as relative path "Images/test.png" in the contents XML when using the dictionary.\
+\
+\
+
+\b\fs32 [2-6] Info.plist
+\b0\fs24 \
+\
+Edit each value of the followings in the Info.plist\
+If you use different file name for this plist,  you need to edit the variable 'PLIST_PATH' for it in Makefile.\
+\
+
+\f2 	<key>CFBundleDevelopmentRegion</key>\
+	<string>English</string>\
+	<key>CFBundleDisplayName</key>\
+	<string>My Dictionary</string>\
+	<key>CFBundleIdentifier</key>\
+	<string>com.apple.dictionary.MySample</string>\
+	<key>CFBundleName</key>\
+	<string>MyDictionary</string>\
+	<key>CFBundleShortVersionString</key>\
+	<string>1.0</string>\
+	<key>DCSDictionaryCopyright</key>\
+	<string>Copyright \'a9 2007 Apple Inc.</string>\
+	<key>DCSDictionaryManufacturerName</key>\
+	<string>Apple Inc.</string>\
+\
+	<key>DCSDictionaryFrontMatterReferenceID</key>\
+	<string>front_back_matter</string>\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 	<key>DCSDictionaryDefaultPrefs</key>\
+	<dict>\
+		<key>pronunciation</key>\
+		<string>0</string>\
+		<key>version</key>\
+		<string>1</string>\
+	</dict>\
+	<key>DCSDictionaryPrefsHTML</key>\
+	<string>MyDictionary_prefs.html</string>\
+	<key>DCSDictionaryXSL</key>\
+	<string>MyDictionary.xsl</string>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0 \cf0 \
+Below is the explanations for each items.\
+\
+- CFBundleDevelopmentRegion\
+  Please specify a region.\
+\
+- CFBundleDisplayName\
+  Full display name of the dictionary. If this is not supplied, the file-system name is used as alternated.\
+\
+- CFBundleIdentifier\
+  Identifier of the dictionary bundle.  Please specify a unique ID.\
+\
+- CFBundleName\
+  Short display name of the dictionary.\
+\
+- CFBundleShortVersionString\
+  Version of the dictionary.\
+\
+- DCSDictionaryCopyright\
+  Copyright notice of the dictionary.\
+  \
+- DCSDictionaryManufacturerName\
+  Manufacturer name of the dictionary.\
+\
+- DCSDictionaryFrontMatterReferenceID\
+  Entry ID of the Front/Back Matter page of the dictionary.  If your dictionary doesn't have such entry, just remove the key/value pair.  The document "Dictionary Format.rtf" explains how the value is used.\
+\
+- DCSDictionaryDefaultPrefs\
+  Default values for the dictionary-specific preferences.  If your dictionary doesn't have preferences, just remove the key/value pair.  The document "Dictionary Format.rtf" explains how the value is used.\
+\
+- DCSDictionaryPrefsHTML\
+- DCSDictionaryXSL\
+  These entries indicate files used to implement the dictionary-specific preferences.  If your dictionary doesn't have preferences, just remove the key/value pair.  The document "Dictionary Format.rtf" explains how the value is used.\
+\
+This file needs to be prepared as an XML text file.  Binary format plist file can't be used to build dictionary.  It is possible to convert binary plist to XML using plutil command.\
+\
+\
+
+\b\fs32 [2-7] Makefile
+\b0\fs24 \
+\
+You need to name the new dictionary.  Edit 'DICT_NAME' for it.  It is used as the folder name of the dictionary.  \
+When DICT_NAME	="My Dictionary", "My Dictionary.dictionary" will be created.\
+\
+If this Dictionary Development Kit is installed at a different location from "/DevTools/Utilities/Dictionary Development Kit", you need to modify the 'DICT_BUILD_TOOL_DIR' value to reflect it.\
+\
+As you can see from the Makefile, the building process is carried out by a script 'build_dict.sh' which is in "/DevTools/Utilities/Dictionary Development Kit/bin/".  It takes 4 arguments --- dictionary_name, dictionary_source_path, StyleSheet_path, and InfoPlist_path.  It builds new dictionary in ./objects folder.\
+\
+You can pass following options before other ordinary arguments to 'build_dict.sh' command:\
+\
+"-e 1"\
+  When this option is specified, the body text data in the dictionary body file are encrypted.  Both Dictionary.app and DictionaryServices.framework decrypt the data automatically when they use the content data.\
+\
+"-v [10.5 | 10.6]"\
+  This option specify the minimum system version which the dictionary can work with.  If specifying 10.6, the dictionary size will be smaller but not be usable with 10.5.  Default value is 10.5.\
+\
+\
+
+\b\fs32 [3] Build
+\b0\fs24 \
+\
+Launch Terminal.app, and on the terminal window, 'cd' to your project folder.\
+Type 'make'.\
+\
+If it finished successfully, type 'make install' to install it.\
+The new dictionary is copied into your ~/Library/Dictionaries/.\
+\
+After installing, you can delete all intermediate files in 'objects' folder.\
+Type 'make clean', and the 'objects' folder is removed.\
+\
+Let's launch Dictionary.app and test it.\
+\
+----\
+}

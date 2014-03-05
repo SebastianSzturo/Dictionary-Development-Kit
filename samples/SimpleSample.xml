@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This is a sample dictionary source file.
+	It can be built using Dictionary Development Kit.
+-->
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+<d:entry id="ldap" d:title="LDAP">
+	<d:index d:value="LDAP"/>
+	<h1>LDAP</h1>
+	<p>Lightweight Directory Access Protocol</p>
+</d:entry>
+<d:entry id="midi" d:title="MIDI">
+	<d:index d:value="MIDI"/>
+	<h1>MIDI</h1>
+	<p>Musical Instrument Digital Interface</p>
+</d:entry>
+<d:entry id="xml" d:title="XML">
+	<d:index d:value="XML"/>
+	<h1>XML</h1>
+	<p>Extensible Markup Language</p>
+</d:entry>
+</d:dictionary>

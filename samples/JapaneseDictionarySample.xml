@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This is a sample dictionary source file.
+	It can be built using Dictionary Development Kit.
+
+	Entry examples for Japanese dictionary, English-Japanese dictionary, and Japanese-English dictionary.
+-->
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">
+
+<d:entry id="annojou_j" d:title="案の定">
+	<d:index d:value="アンノジョウ" d:title="案の定" d:yomi="あんのじょう" />
+	<d:index d:value="あんのじょう" d:title="案の定" d:yomi="あんのじょう" />
+	<d:index d:value="案の定" d:title="案の定" d:yomi="あんのじょう" />
+	<h1>
+		<span class="headword">あん‐の‐じょう</span>
+		<span class="hyouki">【案の定】</span>
+	</h1>
+	<span class="meaning">予想通りに事が運ぶさま。</span>
+</d:entry>
+
+<d:entry id="engeru_keisuu_j" d:title="エンゲル係数">
+	<d:index d:value="エンゲルケイスウ" d:title="エンゲル係数" d:yomi="エンゲルけいすう" />
+	<d:index d:value="えんげるけいすう" d:title="エンゲル係数" d:yomi="エンゲルけいすう" />
+	<d:index d:value="エンゲル係数" d:title="エンゲル係数" d:yomi="エンゲルけいすう" />
+	<h1>
+		<span class="headword">エンゲル‐けいすう</span>
+		<span class="hyouki">【エンゲル係数】</span>
+	</h1>
+	<span class="meaning">生活費の中で食費の占める割合。一般に、この値が高いほど生活水準が低いとされる。</span>
+</d:entry>
+
+<d:entry id="kai_j_1" d:title="会">
+	<d:index d:value="カイ" d:title="会" d:yomi="かい" />
+	<d:index d:value="かい" d:title="会" d:yomi="かい" />
+	<d:index d:value="会" d:title="会" d:yomi="かい" />
+	<h1>
+		<span class="headword">かい</span>
+		<span class="hyouki">【会】</span>
+	</h1>
+	<div>
+		<ol>
+			<li><span class="meaning">人々が集まって行う催し。集まり。つどい。</span></li>
+			<li><span class="meaning">人が集まって作る団体、組織。</span></li>
+		</ol>
+	</div>
+</d:entry>
+
+<d:entry id="kai_j_2" d:title="かい">
+	<d:index d:value="カイ" d:title="かい" />
+	<d:index d:value="かい" d:title="かい" />
+	<h1>
+		<span class="headword">か‐い</span>
+	</h1>
+	<h3>
+		<span class="meaning">
+			<span class="hinshi">［終助詞「か」＋終助詞「い」］</span>
+			文末にくる種々の語に付く。
+		</span>
+	</h3>
+	<span class="meaning">疑問、確認、反語などの意を表す。「知っている—」「できるもん—」</span>
+</d:entry>
+
+<d:entry id="kufuu_j_1" d:title="工夫">
+	<d:index d:value="クフウ" d:title="工夫" d:yomi="くふう" />
+	<d:index d:value="くふう" d:title="工夫" d:yomi="くふう" />
+	<d:index d:value="工夫" d:title="工夫" d:yomi="くふう" />
+	<h1>
+		<span class="headword">く‐ふう</span>
+		<span class="hyouki">【工夫】</span>
+	</h1>
+	<h3>
+		<span class="meaning">
+			<span class="hinshi">名詞</span>
+		</span>
+	</h3>
+	<div class="meaning">いろいろ考えて、より良い方法を見つけること。また、考えついた方法や手段。「—をこらす」「新たな—」</div>
+</d:entry>
+
+<d:entry id="kufuu_j_2" d:title="句風">
+	<d:index d:value="クフウ" d:title="句風" d:yomi="くふう" />
+	<d:index d:value="くふう" d:title="句風" d:yomi="くふう" />
+	<d:index d:value="句風" d:title="句風" d:yomi="くふう" />
+	<h1>
+		<span class="headword">く‐ふう</span>
+		<span class="hyouki">【句風】</span>
+	</h1>
+	<div class="meaning">俳句の作り方にみられる特色。俳風。</div>
+</d:entry>
+
+<d:entry id="koufu_j_1" d:title="工夫">
+	<d:index d:value="コウフ" d:title="工夫" d:yomi="こうふ" />
+	<d:index d:value="こうふ" d:title="工夫" d:yomi="こうふ" />
+	<d:index d:value="工夫" d:title="工夫" d:yomi="こうふ" />
+	<h1>
+		<span class="headword">こう‐ふ</span>
+		<span class="hyouki">【工夫】</span>
+	</h1>
+	<div class="meaning">土木、鉄道、電話、水道などの工事に従事する労働者。工事作業員。</div>
+</d:entry>
+
+<d:entry id="koufu_j_2" d:title="交付">
+	<d:index d:value="コウフ" d:title="交付" d:yomi="こうふ" />
+	<d:index d:value="こうふ" d:title="交付" d:yomi="こうふ" />
+	<d:index d:value="交付" d:title="交付" d:yomi="こうふ" />
+	<h1>
+		<span class="headword">こう‐ふ</span>
+		<span class="hyouki">【交付】</span>
+	</h1>
+	<div class="meaning">国や役所などが、一般の人に書類や金銭を渡すこと。「証明書を—する」</div>
+</d:entry>
+
+<d:entry id="test_j" d:title="テスト">
+	<d:index d:value="テスト" d:title="テスト" />
+	<d:index d:value="てすと" d:title="テスト" />
+	<d:index d:value="test" d:title="test" />
+	<h1>
+		<span class="headword">テスト</span>
+		<span class="hyouki">〔test〕</span>
+	</h1>
+	<div class="meaning">
+		<ol>
+			<li><span class="meaning">学力・能力などの状態や度合いを試すこと。試験。検査。</span></li>
+			<li><span class="meaning">事物の良否・性能、考えたことなどを試して調べること。試験。実験。</span></li>
+		</ol>
+	</div>
+</d:entry>
+
+<d:entry id="test_case_j" d:title="テストケース">
+	<d:index d:value="テストケース" d:title="テストケース" />
+	<d:index d:value="てすとけーす" d:title="テストケース" />
+	<d:index d:value="test case" d:title="test case" />
+	<h1>
+		<span class="headword">テスト‐ケース</span>
+		<span class="hyouki">【test case】</span>
+	</h1>
+	<div class="meaning">
+		<ol>
+			<li><span class="meaning">先例となるような、試験的に行われる事柄。</span></li>
+			<li><span class="meaning">他の事件の判例となるべき訴訟事件</span></li>
+		</ol>
+	</div>
+</d:entry>
+
+
+
+<d:entry id="test_ej" d:title="test">
+	<d:index d:value="test" d:title="test"/>
+	<h1>
+		<span class="headword">test</span>
+		<span class="発音"> / tést / </span>
+	</h1>
+	<div class="meaning">
+		<ol>
+			<li><span class="meaning">試験, 考査, テスト </span></li>
+			<li><span class="meaning">試験 [検査, 考査] する </span></li>
+			<li><span class="meaning">試験 [検査, テスト] を受ける </span></li>
+		</ol>
+	</div>
+</d:entry>
+
+<d:entry id="test_case_ej" d:title="test case">
+	<d:index d:value="test case" d:title="test case"/>
+	<h1>
+		<span class="headword">tést càse</span>
+	</h1>
+	<div class="meaning">
+		<ol>
+			<li><span class="meaning">テストケース, 先例となる事例.</span></li>
+			<li><span class="meaning">試訴：その判決が他の類似の法律問題の先例となるもの.</span></li>
+		</ol>
+	</div>
+</d:entry>
+
+
+
+<d:entry id="kufuu_je" d:title="工夫">
+	<d:index d:value="工夫" d:title="工夫" d:yomi="くふう" />
+	<d:index d:value="くふう" d:title="工夫" d:yomi="くふう" />
+	<d:index d:value="工夫する" d:title="工夫する" d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
+	<d:index d:value="くふうする" d:title="工夫する" d:yomi="くふうする" d:anchor="xpointer(//*[@id='kufuu-suru'])" />
+	<h1>
+		<span class="headword">くふう</span>
+		<span class="hyouki">【工夫】</span>
+	</h1>
+	<div class="meaning">
+		device; idea; invention 
+	</div>
+	<div class="subheadword" id="kufuu-suru">
+		<span class="label">派生語</span> 
+		工夫する｜devise; contrive; invent
+	</div>
+</d:entry>
+
+<d:entry id="koufu_je" d:title="交付">
+	<d:index d:value="交付" d:title="交付" d:yomi="こうふ" />
+	<d:index d:value="こうふ" d:title="交付" d:yomi="こうふ" />
+	<d:index d:value="交付する" d:title="交付する" d:yomi="こうふする" d:anchor="xpointer(//*[@id='koufu-suru'])" />
+	<d:index d:value="こうふする" d:title="交付する" d:yomi="こうふする" d:anchor="xpointer(//*[@id='koufu-suru'])" />
+	<d:index d:value="交付金" d:title="交付金" d:yomi="こうふきん" d:anchor="xpointer(//*[@id='koufu-kin'])" />
+	<d:index d:value="こうふきん" d:title="交付金" d:yomi="こうふきん" d:anchor="xpointer(//*[@id='koufu-kin'])" />
+	<h1>
+		<span class="headword">こうふ</span>
+		<span class="hyouki">【交付】</span>
+	</h1>
+	<div class="meaning">
+		delivery; execution 
+	</div>
+	<div class="subheadword" id="koufu-suru">
+		<span class="label"><b>派生語</b></span> 
+		交付する｜execute; issue 
+	</div>
+	<div class="subheadword" id="koufu-kin">
+		・ 交付金｜a grant; a subsidy 
+	</div>
+</d:entry>
+
+</d:dictionary>

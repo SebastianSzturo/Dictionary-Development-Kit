@@ -1,0 +1,1063 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1159
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset128 HiraKakuProN-W3;\f2\fnil\fcharset0 Baskerville;
+\f3\froman\fcharset0 Times-Roman;\f4\fnil\fcharset0 Baskerville-SemiBold;\f5\fnil\fcharset0 LucidaGrande;
+}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;\red0\green0\blue236;\red202\green230\blue230;
+\red0\green10\blue241;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww14860\viewh18700\viewkind0
+\deftab720
+\pard\pardeftab720
+
+\f0\fs24 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs36 \cf0 Dictionary Source Schema for Dictionary Services XML
+\fs24 \
+\
+\
+
+\fs34 [1] Abstract
+\fs24 \
+\
+This document explains an XML schema that enables developing dictionaries / references that are compatible with Dictionary.app and other Dictionary Services. The schema defines the source code format for the dictionary. The dictionary source needs to be validated to make sure it is in the correct format. It is then processed by the Dictionary Build tool together with css and other auxiliary files, and packaged into a dictionary bundle. The dictionary bundle can be installed into one of the Library/Dictionaries folders to make it accessible from Dictionary.app.\
+\pard\pardeftab720
+\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 The format is defined using selected XHTML modules and markup that are specific to the Dictionary Services.  The Dictionary Services specific markup are used to define the dictionary entry structure such as index.  It also defines a few elements and attributes that provides necessary feature or semantics to the contents (such as an attribute for parental-control).  The contents are expressed using XHTML modules.  The developers can use CSS to control the appearance.  But, the CSS usage should be minimized.  Dictionary.app and Dictionary Panel control the style using their own style definitions to fit the contents to the each display.  (e.g. Specifying font or specifying absolute font size are not recommended.)\
+\
+\
+Table of Contents\
+\
+	[1] Abstract\
+	[2] Schema Definition Files\
+	[3] Dictionary Service XML\
+		[3-1] dic.content\
+		[3-2] Basic Structure\
+			(1) dictionary\
+			(2) entry\
+		[3-3] Index\
+			(1) index\
+			(2) Search Key Text Normalization\
+			(3) Adding Supplementary Key Text\
+		[3-4] Pronunciation\
+			(1) pr\
+		[3-5] parental-control and priority\
+			(1) parental-control\
+			(2) priority\
+			(3) Rules on parental-control/priority\
+		[3-6] dictionary: URI Scheme\
+	[4] Examples\
+		[4-1] Simple Example\
+		[4-2] How Parental-control Works\
+		[4-3] How Priority Works\
+		[4-4] Reference Link in Dictionary\
+		[4-5] Phrase Search --- Highlight a Specific Part in an Entry\
+		[4-6] Very Simple Example\
+	[5] Advanced Topics\
+		[5-1] Front/Back Matter\
+			(1) Prepare an entry for Front/Back Matter\
+			(2) Add keys to the dictionary Info.plist\
+		[5-2] Dictionary-specific Preference\
+			(1) Outline\
+			(2) Dictionary Contents XML\
+			(3) XSLT File to Affect the Contents\
+			(4) XHTML File to Implement the Preference UI\
+			(5) Add keys to the dictionary Info.plist\
+		[5-3] Making Japanese Dictionary\
+			(1) Background and Issues\
+			(2) yomi\
+\
+\
+
+\fs34 [2] Schema Definition Files
+\fs24 \
+\
+The schema is defined using RELAX NG due to a limitation with DTD. More information about RELAX NG can be obtained at URL http://www.relaxng.org/. The schema definition can be found under DictionarySchema directory.\
+\
+\
+
+\fs34 [3] Dictionary Service XML
+\fs24 \
+\
+As mentioned above Dictionary Service XML consists of two parts. One is selected XHTML modules. So far the only module that is not included is the 'Structure' module that defines "html" "body" that forms the structure of an html document. The other part is markups that are specific to Dictionary Service. They are used to define the structure of the dictionary. They are also used to attach specific function or semantics to XHTML elements.\
+\
+DTD for XML modules can be found at the following URL:\
+http://www.w3.org/TR/xhtml-modularization/dtd_module_defs.html#a_dtd_module_defs\
+\
+Markups that are specific to Dictionary Service XML are described below. It uses pseudo DTD for better readability. The default namespace is used to refer XHML, and namespace prefix "d" is used for markup that are specific to Dictionary Services.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [3-1] dic.content
+\fs24 \
+\
+At first, we introduce '%dic.content;' using '%Flow.mix;' as XHTML does.  It is to define an element that can be used in various places.  The Flow.mix includes all text content, block and inline elements.  \
+\
+<!ENTITY % dic.content\
+	"( #PCDATA | %Flow.mix; )*"\
+>\
+\
+<!-- %Flow.mix; includes all text content, block and inline -->\
+<!ENTITY % Flow.mix\
+	"%Heading.class;\
+	| %List.class;\
+	| %Block.class;\
+	| %Inline.class;\
+	%Misc.class;"\
+>\
+\
+\
+
+\fs30 [3-2] Basic Structure
+\fs24 \
+\
+
+\fs28 (1) dictionary
+\fs24 \
+\
+<!ELEMENT d:dictionary ( d:entry+ ) >\
+\
+A dictionary.  Root element of a dictionary containing one or more entries.\
+\
+
+\fs28 (2) entry
+\fs24 \
+\
+\pard\pardeftab720
+\cf0 <!ELEMENT d:entry ( d:index*, %dic.content;) >\
+<!ATTLIST d:entry\
+	id			ID		#REQUIRED\
+	d:title			NMTOKEN	#REQUIRED\
+	d:parental-control	( 1 )		#IMPLIED\
+>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 \
+An entry.  It contains one or more index and a body part, and constructs the logical structure of the entry.\
+\
+Attribute:\
+- id\
+  ID of the entry.  The value should be unique in the dictionary.\
+- d:title\
+  The d:title value of the d:entry is used as the text that represents the entry.  It may be used as the title of the window that displays the entry.  It may also be used to fill the search text field of Dictionary.app so that it can use the text to search in other dictionaries.  In this sense, the d:title of d:entry should be a representative expression and/or canonical form of that entry.\
+- d:parental-control\
+  Parental control level.  It indicates restricted part of the entry for parental control.  The value of this attribute should be "1".  \
+  When parental control function is active, the entry that have this attribute can't be searched.  It doesn't appear on search result headword list.\cf2 \
+\cf0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [3-3] Index
+\fs24 \
+\
+
+\fs28 (1) index
+\fs24 \
+\
+<!ELEMENT d:index EMPTY >\
+\pard\pardeftab720
+\cf0 <!ATTLIST	d:index\
+	d:value	NMTOKEN	#REQUIRED\
+	d:title		NMTOKEN	#IMPLIED\
+	d:parental-control	NMTOKEN	#IMPLIED\
+	d:priority	NMTOKEN	#IMPLIED\
+	d:anchor	NMTOKEN	#IMPLIED\
+	d:yomi	NMTOKEN	#IMPLIED\
+>\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 \
+Index information.  This information is extracted from entry and used to build the index.  The index element should appear prior to other elements in the entry.  \
+\
+Attribute:\
+- d:value\
+  Search key text of for the entry.\
+- d:title\
+  Headword text that is displayed on the search result list.  When the value is the same to the d:index value, it can be omitted.  In that case, the value of the d:value is used also for the d:title.\
+- d:parental-control\
+  Used to remove the title from search result list.  (cf. "[3-5] parental-control and priority")\
+- d:priority\
+  Used to control if Dictionary Panel finds the <d:index> or not.  (cf. "[3-5] parental-control and priority")\
+- d:anchor\
+  Used to highlight a specific part in an entry.  For example, it is used to highlight an idiomatic phrase explanation in an entry for a word. (cf. "[4-5] Phrase Search --- Highlight a Specific Part in an Entry")\
+- d:yomi\
+  Used only in making Japanese dictionaries.  (cf. "[5-3] Making Japanese Dictionary")\
+\
+e.g.\
+----\
+<d:index d:value="make"/>\
+<d:index d:value="makes"/>\
+<d:index d:value="made"  d:title="made (make)"/>\
+<d:index d:value="making" d:priority="2"/>\
+<d:index d:value="make it" d:title="make it" d:parental-control="1" d:anchor="xpointer(//*[@id='make_it'])"/>\
+----\
+\
+If the entry for "make" contains these <d:index> definitions, the entry can be searched not only by "make" but also by "makes" or "made".  On the search result list, title value texts like "made" are displayed.  \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs28 \cf0 (2) Search Key Text Normalization
+\fs24 \
+\
+It is convenient for users if a capital letter word can be searched by typing in lower case letters.  DictionaryServices supports it.  The search key text defined as d:value of <d:index> is normalized into lower case when it is registered to the dictionary index.  When searching, query key text is normalized in the same manner.\
+\
+The normalization is as follows.\
+(a) Apply NFC normalization. (Convert into UNICODE Normalization Form C (NFC).)\
+(b) Substitute characters to make easier to input by keyboard.  Process symbol characters and character width mainly. (e.g. "\'a9" -> "(C)", "\'bd" -> "1/2", \{ "\uc0\u8208 ", "\'96", "\'97", "\u8213 " -> "-", \{ "\'91", "\'92" \} -> "'", "
+\f1 \'82\'60
+\f0 " -> "A", and "-" -> " " )\
+(c) Trim white spaces on both sides.  ( "  abc def  " -> "abc def" )\
+(d) Convert upper case characters into lower case.  ( "\'c6\'e5Bcd\'c9" -> "\'e6\'e5bcd\'e9" )\
+\
+For the step (b), DictionaryServices basically uses the data in the Common Locale Data Repository (CLDR). (It is in the supplemental data: http://www.unicode.org/reports/tr35/#Supplemental_Data , See section C.2 characters.)  You can download it from the CLDR site ( http://www.unicode.org/cldr/ ).  Note that some characters such as "\'e6" are not processed at this step.\
+\
+
+\fs28 (3) Adding Supplementary Key Text
+\fs24 \
+\
+In many languages, it is convenient if a user can search a word with diacritical marks by typing plane characters.  When search key text contains a character with diacritical mark, corresponding plane character key is supplemented automatically.\
+When a dictionary source contains a <d:index> as below.\
+----\
+<d:index d:value="clich\'e9"/>\
+----\
+The omitted d:title is supplemented.\
+----\
+<d:index d:value="clich\'e9" d:title="clich\'e9"/>\
+----\
+Then, another key text definition that doesn't have diacritical mark in the key text is supplemented as below.\
+----\
+<d:index d:value="clich\'e9" d:title="clich\'e9"/>\
+<d:index d:value="cliche" d:title="clich\'e9"/>\
+----\
+\
+The supplementary key text is created as follows.  If the key is not affected by the process, additional key is not created.\
+(a) Remove diacritical marks.  ( "\'e6\'e5bcd\'e9" -> "\'e6abcde" )\
+(b) Substitute characters to make easier to input by keyboard.   ( "\'df" -> "ss", "\'e6" -> "ae", "\'f8" -> "o", "\'9c" -> "oe", "\uc0\u307 " -> "ij", "\u457 " -> "lj", "\u460 " -> "nj", "\u454 " -> "dz", "\u499 " -> "dz", "\u537 " -> "s", "\u539 " -> "t", "\u329 " -> "'n", "\u383 " -> "s" )\
+\
+This process is done in the Dictionary Development Kit.  As the results, user can search the "clich\'e9" by typing "clich\'e9" or "cliche".\
+\
+In some languages, there may be the cases that these steps are not desirable.  It is the case that characters with diacritical marks need to be distinguished from plane characters. For such requirement, this process of adding the supplementary keys can be suppressed.  Please specify "-s 0" option for "build_dict.sh" to suppress it.  (cf. Makefile in project_templates.)  In such cases, the dictionary content developers need to define necessary supplementary keys by themselves, of course.\
+\
+\
+
+\fs30 [3-4] Pronunciation
+\fs24 \
+\
+
+\fs28 (1) pr
+\fs24 \
+\
+<!ATTLIST div d:priority NMTOKEN #IMPLIED >\
+<!ATTLIST span d:priority NMTOKEN #IMPLIED >\
+\
+This attribute is used by Dictionary Panel to pick up the pronunciation part text.  For this purpose, the value is not used and any values are accepted.  \
+\
+e.g.\
+----\
+<h1>make</h1>\
+<span class="syntax"><span d:pr="1">| m\uc0\u257 k |</span></span>\
+----\
+\
+This attribute can be used also to switch pronunciation notation according to the dictionary-specific preferences.  (cf. [5-2] Dictionary-specific Preference)\
+\
+\
+
+\fs30 [3-5] parental-control and priority
+\fs24 \
+\
+Two attributes are added also for XHTML elements.  \
+\
+
+\fs28 (1) parental-control
+\fs24 \
+\
+<!ATTLIST div d:parental-control NUMBER #IMPLIED >\
+<!ATTLIST span d:parental-control NUMBER #IMPLIED >\
+<!ATTLIST d:entry d:parental-control NUMBER #IMPLIED >\
+<!ATTLIST d:index d:parental-control NUMBER #IMPLIED >\
+\
+This attribute is used to hide some parts of the content when parental control function is active.\
+The value is always "1".  When parental control function is active, the elements that have the attribute are not shown.  \
+\
+The entry element also can have this attribute.  If an <d:entry> has the attribute, d:title strings that belong to the entry don't appear on search result headword list.\
+When some parts of an entry body are hidden, corresponding d:title strings in <d:index> tags may also need to be hidden.  In such case, it is necessary to add d:parental-control attribute to the d:index tags.\
+\
+
+\fs28 (2) priority
+\fs24 \
+\
+<!ATTLIST div d:priority NUMBER #IMPLIED >\
+<!ATTLIST span d:priority NUMBER #IMPLIED >\
+<!ATTLIST d:index d:priority NUMBER #IMPLIED >\
+\
+This attribute is used to provide brief summary of an <d:entry> by hiding some parts of the content.  Typically for Dictionary Panel.\
+The value can be one of "0", "1", "2", ... "9".  The Dictionary Panel hides the elements that have "2" or greater value for this attribute.\
+When this attribute is used for <d:index>, it controls if the search key text is found on the Dictionary Panel or not.\
+The behavior is defined only for "0" and "2", now.  The values "1", "3", "4", ... "9" are reserved for future use.\
+\
+
+\fs28 (3) Rules on 
+\fs30 parental-control
+\fs28 /priority
+\fs24 \
+\
+Additional rules below are applied on the parental-control/priority attributes.\
+\
+(a) If an <d:entry> doesn't have this attribute, it is considered that the value "0" is specified.\
+\
+(b) An element that doesn't have this attribute inherits the value of it's parent element.  \
+\
+(c) A child element can have equal or greater value of that of it's parent.  i.e. If an element has the value that causes to hide the element, all of children elements of it also are hidden.  Even if a child has smaller value, it is not shown.\
+\
+(These rules are not described in this format definition in RELAX NG.)\
+\
+\
+
+\fs30 [3-6] dictionary: URI Scheme
+\fs24 \
+\
+'x-dictionary:' is an URI scheme to describe cross referencing between entries in dictionaries.  It is used in <a> tag like <a href="x-dictionary:r:another_id">.\
+\
+The 'x-dictionary:' URI contains three elements separated by ":" as the general form.  Target selector, target text, and dictionary bundle ID.  Target selector must be either "d" or "r" .  "d" (for definition) is for searching definitions of the following key text.  "r" (for reference) is for referring a specific entry by treating the following text as a reference ID that is unique in each dictionary.\
+\
+  x-dictionary:d:key_text:dict_bundle_id\
+  x-dictionary:r:reference_id:dict_bundle_id\
+\
+Dictionary bundle ID can be omitted in both forms.  In that case, Dictionary Services searches the target text in all active dictionaries.\
+\
+  x-dictionary:d:key_text\
+  x-dictionary:r:reference_id\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs34 \cf0 [4] Examples
+\fs24 \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [4-1] Simple Example
+\fs24 \
+\
+Below is a simple example of a dictionary that contains an entry.\
+\
+----\
+<?xml version="1.0" encoding="UTF-8"?>\
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\
+<d:entry id="make_1" d:title="make">\
+	<d:index d:value="make"/>\
+	<d:index d:value="makes"/>\
+	<d:index d:value="made" d:title="made (make)"/>\
+	<d:index d:value="making" d:priority="2"/>\
+	<d:index d:value="make it" d:parental-control="1" d:anchor="xpointer(//*[@id='make_it'])"/>\
+	<div d:priority="2"><h1>make</h1></div><span class="syntax"><span d:pr="US">| m\uc0\u257 k |</span></span>\
+	<div>\
+		<ol>\
+			<li>\
+				Form by putting parts together or combining substances; construct; create; produce \
+				<span d:priority="2"> : <i>Mother made her a beautiful dress</i>\
+				</span>\
+				.\
+			</li>\
+			<li>\
+				Cause to be or become\
+				<span d:priority="2"> : <i>The news made me happy</i>\
+				</span>\
+				.\
+			</li>\
+		</ol>\
+	</div>\
+	<div d:parental-control="1" d:priority="2">\
+		<h3>PHRASES</h3>\
+		<div id="make_it"><b>make it</b> : succeed in something; survive.</div>\
+		<h4><a href="x-dictionary:r:make_up_ones_mind"><b>make up one's mind</b></a></h4>\
+	</div>\
+</d:entry>\
+\
+...\
+\
+</d:dictionary>\
+----\
+\
+\
+When the XML of this example is shown with Dictionary.app, it becomes like the following.\
+----------------------------------------------------\
+\pard\pardeftab720
+
+\f2\fs48 \cf0 make\
+\pard\pardeftab720
+
+\fs32 \cf0 | m
+\f3 \uc0\u257 
+\f2 k |\
+1. Form by putting parts together or combining substances; construct; create; produce : 
+\i Mother made her a beautiful dress
+\i0 .\
+2. Cause to be or become : 
+\i The news made me happy
+\i0 .\
+PHRASES\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+
+\f3\b \cf0 make it
+\b0  : succeed in something; survive.
+\f2 \
+\pard\pardeftab720
+
+\f4\b \cf3 \ul \ulc3 make up one's mind
+\f0\b0\fs24 \cf0 \ulnone \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 ----------------------------------------------------\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f5 \cf0 \
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0\fs30 \cf0 [4-2] How Parental-control Works
+\fs24 \
+\
+When parental control function is active, the elements that have the value "1" for 'd:parental-control' are not shown.\
+The PHRASES block is not shown for this example.\
+----------------------------------------------------\
+\pard\pardeftab720
+
+\f2\fs48 \cf0 make\
+
+\fs32 | m
+\f3 \uc0\u257 
+\f2 k |\
+1. Form by putting parts together or combining substances; construct; create; produce : 
+\i Mother made her a beautiful dress
+\i0 .\
+2. Cause to be or become : 
+\i The news made me happy
+\i0 .
+\fs48 \
+\pard\pardeftab720
+
+\f0\fs24 \cf0 ----------------------------------------------------
+\f5 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 Note that the 
+\f0 <d:index d:value="make it" d:title="make it" d:parental-control="1" ... /> tag contains d:parental-control attribute.  It is to remove the title from the search result list.  Please keep consistency between hidden content part and hidden index title.
+\f5 \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0\fs30 \cf0 [4-3] How Priority Works
+\fs24 \
+\
+Dictionary Panel hides the elements that have "2" or greater value for 'd:priority' attribute.\
+The example and phrases are not shown for this example. \
+----------------------------------------------------\
+\pard\pardeftab720
+
+\f2\fs32 \cf0 | m
+\f3 \uc0\u257 
+\f2 k |\
+1. Form by putting parts together or combining substances; construct; create; produce.\
+2. Cause to be or become.
+\f0\fs24 \
+----------------------------------------------------
+\f5 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0 \cf0 The headword is also hidden.  This example illustrates the usage for Dictionary Panel.  Since the Dictionary Panel highlights the text under mouse cursor, and it looks like the headword, the headword in dictionary contents is hidden.
+\f5 \
+\
+
+\f0 Dictionary Panel doesn't find the <d:index> that have d:priority="2".  With the <d:index d:value="making" d:priority="2"/>, the Dictionary Panel doesn't find the "making".
+\f5 \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0\fs30 \cf0 [4-4] Reference Link in Dictionary
+\fs24 \
+\
+An electronic dictionary often contains static hypertext links in it.  The next part in the sample above illustrates how it can be implemented.\
+----\
+		<h3>PHRASES</h3>\
+		...\
+		<h4><a href="x-dictionary:r:make_up_ones_mind"><b>make up one's mind</b></a></h4>\
+----\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f5 \cf0 This part is rendered on Dictionary.app as below.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0 \cf0 ----------------------------------------------------
+\f5 \
+\pard\pardeftab720
+
+\f2\fs32 \cf0 PHRASES\
+\pard\pardeftab720
+
+\f4\b \cf3 \ul make up one's mind
+\f0\b0\fs24 \cf0 \ulnone \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 ----------------------------------------------------
+\f5 \
+
+\f0 When user clicks on the anchor, it jumps in the dictionary to another entry that has the entry id "make_up_ones_mind".  The entry would be the one like below.\
+----\
+<d:entry id="make_up_ones_mind" d:title="make up one's mind" d:parental-control="1">\
+	<d:index d:value="make up one's mind"/>\
+	<h1>make up one's mind</h1>\
+	<ul>\
+		<li>\
+		make a decision.\
+		</li>\
+	</ul>\
+</d:entry>\
+----\
+Please refer "[3-6] dictionary: URI Scheme" for other variations.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [4-5] Phrase Search --- Highlight a Specific Part in an Entry
+\fs24 \
+\
+There are situations that we want to highlight a specific part in an entry.  A popular case is to point a section for an idiomatic phrase in a word entry.  It is to make it easier for the user to find the corresponding part in the entry.\
+The d:anchor attribute of <d:index> is used for such purposes.  The value of the d:anchor attribute is an XPath expression that specifies the block in the entry to be highlighted.\
+\
+In the sample in "[4-1] Simple Example", the entry "make_1" has the next <d:index>.  In this example, an id is used in the expression.\
+----\
+<d:entry id="make_1" d:title="make">\
+	...\
+	<d:index d:value="make it" d:parental-control="1" d:anchor="xpointer(//*[@id='make_it'])"/>\
+----\
+When user searches "make it" on Dictionary.app and selects the entry, Dictionary.app jumps to the entry, makes the part specified by the XPath expression, and scrolls the view to show that part.  As the result, following part is highlighted.\
+----\
+		<div id="make_it"><b>make it</b> : succeed in something; survive.</div>\
+----\
+\
+\pard\pardeftab720\sa60
+\cf0 The display will become as follows.\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+\cf0 ----------------------------------------------------\
+\pard\pardeftab720\sa80
+
+\f2\fs48 \cf0 make\
+\pard\pardeftab720
+
+\f3\fs32 \cf0 | m\uc0\u257 k |\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf0 {\listtext	1.	}Form by putting parts together or combining substances; construct; create; produce : 
+\i Mother made her a beautiful dress
+\i0  .\
+{\listtext	2.	}Cause to be or become : 
+\i The news made me happy
+\i0  .\
+\pard\pardeftab720\sa60
+
+\f2 \cf0 PHRASES\
+\pard\pardeftab720
+
+\f3\b \cf0 \cb4 make it
+\b0  : succeed in something; survive.\
+\pard\pardeftab720\sa60
+{\field{\*\fldinst{HYPERLINK "x-dictionary:r:make_up_ones_mind"}}{\fldrslt 
+\f4\b \cf5 \cb1 make up one's mind}}
+\f4\b \cf5 \cb1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f0\b0\fs24 \cf0 ----------------------------------------------------\
+\
+In case you use an id for this purpose like this example, make sure that the id is unique in the dictionary.  It is to avoid an id conflict when multiple entries of the dictionary are shown in a view.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [4-6] Very Simple Example
+\fs24 \
+\
+A simpler example is below.  This example illustrates a case like acronym dictionary.\
+Let us suppose that a Comma Separated Values (CSV) file like below exists.\
+----\
+LDAP,Lightweight Directory Access Protocol\
+MIDI,Musical Instrument Digital Interface\
+XML,Extensible Markup Language\
+----\
+Such data can be converted as next.\
+----\
+<?xml version="1.0" encoding="UTF-8"?>\
+<d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\
+<d:entry id="ldap" d:title="LDAP">\
+	<d:index d:value="LDAP"/>\
+	<h1>LDAP</h1>\
+	<p>Lightweight Directory Access Protocol</p>\
+</d:entry>\
+<d:entry id="midi" d:title="MIDI">\
+	<d:index d:value="MIDI"/>\
+	<h1>MIDI</h1>\
+	<p>Musical Instrument Digital Interface</p>\
+</d:entry>\
+<d:entry id="xml" d:title="XML">\
+	<d:index d:value="XML"/>\
+	<h1>XML</h1>\
+	<p>Extensible Markup Language</p>\
+</d:entry>\
+</d:dictionary>\
+----\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs34 \cf0 [5] Advanced Topics
+\fs24 \
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [5-1] Front/Back Matter
+\fs24 \
+\
+Front/Back Matter can be added to a dictionary by the following steps.\
+\
+If you don't add Front/Back Matter to the dictionary the entry for the purpose nor DCSDictionaryFrontMatterReferenceID definition in the Info.plist are not necessary.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs28 \cf0 (1) Prepare an entry for Front/Back Matter
+\fs24 \
+\
+Prepare an entry for Front/Back Matter like below.\
+----\
+<d:entry id="front_back_matter" d:title="Front/Back Matter">\
+	<h1><b>My Dictionary</b></h1>\
+	<h2>Front/Back Matter</h2>\
+	<p>\
+		This is a front matter page of the sample dictionary.<br/>\
+	</p>\
+	\
+	...\
+	\
+</d:entry>\
+----\
+The entry id ("front_back_matter" in this example) is used to find the entry.\
+\
+
+\fs28 (2) Add keys to the dictionary Info.plist\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs24 \cf0 \
+To indicate that the dictionary has Front/Back matter entry, add the next key/value pair to the dictionary Info.plist.\
+----\
+<key>DCSDictionaryFrontMatterReferenceID</key>\
+<string>front_back_matter</string>\
+----\
+The value is the id of the entry used for the Front/Back Matter.\
+\
+With these steps (1) and (2), the dictionary has the entry as the Front/Back Matter page.\
+To see the page on Dictionary.app, open "Go" menu, choose "Front/Back Matter" menu item.  If it has sub-menu items, choose one of them.  Dictionary.app shows the page.\
+\
+In this example the front/back matter entry doesn't have <d:index> in it.  The page cannot be found from key text searching.  It can be reached only by reference jump using the entry id.  The entry can have <d:index>, of course.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [5-2] Dictionary-specific Preference
+\fs24 \
+\
+A dictionary can have its own preference.  For example, New Oxford American Dictionary (NOAD) in Leopard has the preference to choose preferred pronunciation representation.  i.e. The user can choose one phonetic notation from U.S. English (Diacritical), U.S. English (IPA), and British English (IPA).  The example in this section also contains check boxes.  We use two check boxes to to turn on or off of displaying columns and pictures in the contents.  This section illustrates how the preferences are working.  (Note that the phonetic notation preference processing in this example is a simplified one than NOAD.)\
+\
+If you don't add preference to the dictionary, these XSLT, XHTML files nor definitions for the purpose in the Info.plist are not necessary.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs28 \cf0 (1) Outline
+\fs24 \
+\
+To implement dictionary-specific preference, it is necessary to do the following steps.\
+\
+(a) Prepare content XML.\
+(b) Prepare XSLT file that uses the preference values as the arguments.  \
+  The XSLT is applied to each entry by Dictionary.app before displaying the contents.  We can change the display using the XSLT and the arguments to it.\
+(c) Prepare HTML file to implement preferences UI.  \
+  Using the HTML, user can change the preference variables that are passed to the XSLT as the arguments.\
+(d) Add keys to the dictionary Info.plist indicate the XSLT and HTML files.\
+\
+
+\fs28 (2) Dictionary Contents XML
+\fs24 \
+\
+Prepare the content as below so that we can switch the pronunciation notation by preference.  \
+----\
+<d:entry id="make_1" d:title="make">\
+	...\
+	<h1>make</h1>\
+	<span class="syntax">\
+		<span d:pr="US">| m\uc0\u257 k |</span>\
+		<span d:pr="US_IPA">| me\uc0\u618 k |</span>\
+		<span d:pr="UK_IPA">| me\uc0\u618 k |</span>\
+	</span>\
+	...\
+</d:entry>\
+<d:entry id="dictionary_application" d:title="Dictionary application">\
+	...\
+	<h1>Dictionary application </h1>\
+	...\
+	<span class="column">\
+		The Dictionary application first appeared in Tiger.\
+	</span>\
+	<span class="picture">\
+		It's application icon looks like below.<br/>\
+		<img src="Images/dictionary.png" alt="Dictionary.app Icon"/>\
+	</span>\
+</d:entry>\
+\
+----\
+In this example, we can show or hide each of the phonetic sign, column or picture part using XSLT.  The XSLT in the next section removes the phonetic signs or unnecessary parts that are not chosen.\
+\
+
+\fs28 (3) XSLT File to Affect the Contents
+\fs24 \
+\
+Prepare an XSLT file to affect the contents.  In this example, it removes the unnecessary phonetic signs.   (Dictionary Panel picks up the first found one.)  This XSLT uses $pronunciation to switch the result.  The variable $pronunciation, $display-column, and $display-picture are supplied as global variables by Dictionary.app.  How the variables are defined will be explained in the succeeding sections.\
+----\
+...\
+<xsl:template match="*[@d:pr='US']">\
+	<xsl:if test="$pronunciation = '0'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+<xsl:template match="*[@d:pr='IPA']">\
+	<xsl:if test="$pronunciation = '1'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+	<xsl:if test="$pronunciation = '2'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+<xsl:template match="*[@d:pr='US_IPA']">\
+	<xsl:if test="$pronunciation = '1'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+<xsl:template match="*[@d:pr='UK_IPA']">\
+	<xsl:if test="$pronunciation = '2'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+<xsl:template match="span[@class='column']">\
+	<xsl:if test="$display-column = '1'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+<xsl:template match="span[@class='picture']">\
+	<xsl:if test="$display-picture = '1'">\
+		<xsl:copy>\
+			<xsl:apply-templates select="@*|node()" />\
+		</xsl:copy>\
+	</xsl:if>\
+</xsl:template>\
+\
+...\
+----\
+Place the XSLT file in the "OtherResources" folder of the dictionary project.\
+The complete file of this example is available in the project_template at:\
+"/DevTools/Utilities/Dictionary Development Kit/project_templates/OtherResources/MyDictionary.xsl"\
+\
+
+\fs28 (4) XHTML File to Implement the Preference UI
+\fs24 \
+\
+Prepare an XHTML file to implement the preference UI.  It is used when user chooses the dictionary on Dictionary.app preferences.  On this XHTML, the user can choose a preferred phonetic sign in the three notations.  The value for the "pronunciation" is saved, and passed to the XSLT, above.  \
+As for the check boxes, the variable names passed to the XSLT are the ones that are generated by concatenating the 'name' and 'value' with '-'  (i.e. display-column and display-picture).  Since the names of check boxes in a same group have the same 'name' ('display' in this example), we can't use it as is.\
+----\
+<html xmlns="http://www.w3.org/1999/xhtml">\
+	<head>\
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />\
+	</head>\
+	<body>\
+		<div id="copyright"></div>\
+		<hr />\
+		<div class="query">\
+			<input type="hidden" name="version" value="1" />\
+		</div>\
+		<div class="query">\
+			Pronunciation:<br />\
+			<input type="radio" name="pronunciation" value="0">US English (Diacritical)</input><br />\
+			<input type="radio" name="pronunciation" value="1">US English (IPA)</input><br />\
+			<input type="radio" name="pronunciation" value="2">British English (IPA)</input><br />\
+			<hr />\
+			Display:<br />\
+			<input type="checkbox" name="display" value="column">Column</input>\
+			<input type="checkbox" name="display" value="picture">Picture</input><br />\
+		</div>\
+	</body>\
+</html>\
+----\
+Place the XHTML file in the "OtherResources" folder of the dictionary project.\
+The complete file of this example is available in the project_template at:\
+"/DevTools/Utilities/Dictionary Development Kit/project_templates/OtherResources/MyDictionary_prefs.html".\
+\
+
+\fs28 (5) Add keys to the dictionary Info.plist
+\fs24 \
+\
+To indicate that the dictionary has its own preference, add the following keys to the Info.plist.  The values are the ones for this example.  The 'version' indicates the version of this preference definition contents.  When the definition is changed, for example some items are added to the preference, the version value should be incremented by the dictionary developer.  Dictionary.app resets the preference data saved for the old version preference, and recreates preference data for the new version.\
+----\
+	<key>DCSDictionaryDefaultPrefs</key>\
+	<dict>\
+		<key>pronunciation</key>\
+		<string>0</string>\
+		<key>display-column</key>\
+		<string>1</string>\
+		<key>display-picture</key>\
+		<string>1</string>\
+		<key>version</key>\
+		<string>1</string>\
+	</dict>\
+	<key>DCSDictionaryPrefsHTML</key>\
+	<string>MyDictionary_prefs.html</string>\
+	<key>DCSDictionaryXSL</key>\
+	<string>MyDictionary.xsl</string>\
+----\
+The 'DCSDictionaryDefaultPrefs' defines the default values.  \
+The 'DCSDictionaryPrefsHTML' value should be the XHTML file name.\
+The 'DCSDictionaryXSL'  value should be the XSLT file name.\
+\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs30 \cf0 [5-3] Making Japanese Dictionary
+\fs24 \
+\
+In Japanese dictionaries, it is very popular that search key text of an entry and the representative expression of it are different.  It is because a word often has multiple representations, such as Kanji and Hiragana.  For such situation, the d:title value often differs from the value of d:value.  And, it is still insufficient to satisfy the needs to make Japanese dictionaries.  To solve the problem, d:yomi attribute is defined for <d:index>.  The d:yomi is an attribute to describe Japanese Yomi.  Yomi means the reading of a character, word, sentence, etc.  e.g. A word "
+\f1 \'8a\'bf\'8e\'9a
+\f0 " has "
+\f1 \'82\'a9\'82\'f1\'82\'b6
+\f0 " as its Yomi.\
+\
+In this section, such background and issues are explained, and the usage of the d:yomi is illustrated.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs28 \cf0 (1) Background and Issues
+\fs24 \
+\
+(a) Varieties in Character Classes\
+\
+Japanese language has multiple character classes.  Hiragana, Katakana, and Kanji.  The Kanji is ideographic characters.  The others are phonograms.  (Foreign words are often represented using Katakana.  Roman characters also are used.)  A Kanji word has its Yomi that represents its reading.  Yomi is usually described in Hiragana or Katakana.  Thus, a word has multiple representations.\
+\
+(b) Searching by Yomi (Hiragana)\
+\
+In many of Japanese word dictionaries, the entries are sorted by Yomi.  In such dictionaries, the user search words using Yomi.  Hiragana and Katakana are phonograms, and the numbers of them are not so many.  So, using Yomi is suitable for searching words.\
+\
+(c) Homophone (Different Kanji with same Yomi)
+\f1 , etc.
+\f0 \
+\
+The first issue using Yomi in searching words is homophone.  There are often many words that have the same Yomi.  e.g.  There are many words that have "
+\f1 \'82\'a9\'82\'a2
+\f0 " as Yomi.  
+\f1 \'89\'ef
+\f0 , 
+\f1 \'8a\'45
+\f0 , 
+\f1 \'8a\'4c
+\f0 , 
+\f1 \'89\'f0
+\f0 , 
+\f1 \'8a\'4b
+\f0 , 
+\f1 \'89\'f1
+\f0 , 
+\f1 \'89\'ee
+\f0 , ...
+\f1 \'89\'ba\'88\'ca
+\f0 , 
+\f1 \'8d\'62\'94\'e3
+\f0 , ... \
+So, Japanese dictionaries have the search result list for "
+\f1 \'82\'a9\'82\'a2
+\f0 " as below.\
+----------------------------------------------------\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\f1 \cf0 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'89\'ef\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'8a\'45\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'8a\'4c\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'89\'f0\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'8a\'4b\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'89\'f1\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'89\'ee\'81\'7a
+\f0 \
+...\
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'89\'ba\'88\'ca\'81\'7a
+\f0 \
+
+\f1 \'82\'a9\'82\'a2
+\f0  
+\f1 \'81\'79\'8d\'62\'94\'e3\'81\'7a
+\f0 \
+...\
+----------------------------------------------------\
+The user can choose the appropriate entry using the additional Kanji part.\
+\
+If the search word is "
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0 ", the results would be:\
+----------------------------------------------------\
+
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0  
+\f1 \'81\'79\'8d\'48\'95\'76\'81\'7a
+\f0 \
+
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0  
+\f1 \'81\'79\'8b\'e5\'95\'97\'81\'7a
+\f0 \
+...\
+----------------------------------------------------\
+\
+Another case is that "different Yomi with same Kanji".\
+The search results for "
+\f1 \'8d\'48\'95\'76
+\f0 " may be like below.  The Yomi 
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0  and 
+\f1 \'82\'b1\'82\'a4\'82\'d3
+\f0  are added to choose appropriate entry.\
+----------------------------------------------------\
+
+\f1 \'8d\'48\'95\'76
+\f0  
+\f1 \'81\'79\'82\'ad\'82\'d3\'82\'a4\'81\'7a
+\f0 \
+
+\f1 \'8d\'48\'95\'76
+\f0  
+\f1 \'81\'79\'82\'b1\'82\'a4\'82\'d3\'81\'7a
+\f0 \
+...\
+----------------------------------------------------\
+\
+Dictionary.app displays the d:title and d:yomi in the appropriate order in the search result list.  When user searched using Hiragana, Yomi comes first and Kanji is added.  When user searched using Kanji, Yomi is added.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\pardirnatural
+
+\fs28 \cf0 (2) yomi
+\fs24 \
+\
+In a Japanese dictionary, a Kanji entry has both Kanji and Yomi as its d:value attribute of <d:index>.  The d:title is used to hold its ordinary form.  \
+----\
+<d:entry ... d:title="
+\f1 \'8d\'48\'95\'76
+\f0 ">\
+	<d:index d:value="
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 "/>\
+	<d:index d:value="
+\f1 \'8d\'48\'95\'76
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 "/>\
+	...\
+</d:entry>\
+----\
+In the second index, there is no Yomi information.  So, we use d:yomi as below.\
+----\
+<d:entry ... d:title="
+\f1 \'8d\'48\'95\'76
+\f0 ">\
+	<d:index d:value="
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 " d:yomi="
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0 "/>\
+	<d:index d:value="
+\f1 \'8d\'48\'95\'76
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 " d:yomi="
+\f1 \'82\'ad\'82\'d3\'82\'a4
+\f0 "/>\
+	...\
+</d:entry>\
+<d:entry ... d:title="
+\f1 \'8d\'48\'95\'76
+\f0 ">\
+	<d:index d:value="
+\f1 \'82\'b1\'82\'a4\'82\'d3
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 " d:yomi="
+\f1 \'82\'b1\'82\'a4\'82\'d3
+\f0 "/>\
+	<d:index d:value="
+\f1 \'8d\'48\'95\'76
+\f0 " d:title="
+\f1 \'8d\'48\'95\'76
+\f0 " d:yomi="
+\f1 \'82\'b1\'82\'a4\'82\'d3
+\f0 "/>\
+	...\
+</d:entry>\
+----\
+With the d:yomi and the d:title, Dictionary.app can add the supplementary information in either of searching by Yomi or searching by Kanji.  The d:title can be omitted when it is the same value to d:value, of course.\
+\
+cf. \
+An example of Japanese dictionary source is available in the sample folder.\
+- "/DevTools/Utilities/Dictionary Development Kit/samples/JapaneseDictionarySample.xml"\
+It contains entries for various cases. e.g. Word that is written using multiple character classes mixed, foreign word that has both Katakana and Roman representation, etc.\
+\
+--------\
+}
